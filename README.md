@@ -1,20 +1,17 @@
 # Bittrex
 
-TODO: Write a gem description
+Basic interaction with Bittrex API
+See API details here: https://bittrex.com/home/api
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'bittrex'
+    gem 'bittrex', git:'https://github.com/nandosb/ruby-bittrex-api'
 
 And then execute:
 
     $ bundle
-
-Or install it yourself as:
-
-    $ gem install bittrex
 
 ## Usage
 
