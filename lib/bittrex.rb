@@ -13,7 +13,6 @@ module Bittrex
       self
     end
 
-
     # Public methods
 
     def markets()
@@ -68,18 +67,36 @@ module Bittrex
       end
     end
 
+    def open_order(order_uuid, market = nil)
+      orders = []
+
+      if market then
+        orders = request("https://bittrex.com/api/#{API_VERSION}/market/getopenorders", "market=#{market}")
+      else
+        orders = request("https://bittrex.com/api/#{API_VERSION}/market/getopenorders")
+      end
+
+      orders.each do |order|
+        if order['OrderUuid'] == order_uuid then
+          return order
+        end
+      end
+
+      return nil
+
+    end
+
     # End of market actions related methods
 
 
     # Personal account methods
 
-    def balance(currency = nil)
-      if currency then
-        request("https://bittrex.com/api/#{API_VERSION}/account/getbalance", "currency=#{currency}")
-      else
-        request("https://bittrex.com/api/#{API_VERSION}/account/getbalance")
-      end
+    def balances()
+      request("https://bittrex.com/api/#{API_VERSION}/account/getbalances")
+    end
 
+    def balance(currency)
+      request("https://bittrex.com/api/#{API_VERSION}/account/getbalance", "currency=#{currency}")
     end
 
     def order_history(market = nil, count = 10)
@@ -95,7 +112,7 @@ module Bittrex
         nonce = Time.now.to_i
 
         @final_url = "#{url}?apikey=#{@api_key}&nonce=#{nonce}"
-        if !params then
+        if params then
           @final_url += '&'+params
         end
 
@@ -107,7 +124,7 @@ module Bittrex
         if response['success']
           response['result']
         else
-          raise Exception, "Request failed: #{response}"
+          raise Exception, response['message']
         end
       end
 
