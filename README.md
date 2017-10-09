@@ -15,7 +15,15 @@ And then execute:
 
 ## Usage
 
-TODO: Write usage instructions here
+    client = Bittrex.new('<your_key>', '<your_secret>')
+    markets = client.markets()
+
+## Running unit tests
+
+    cd /your/app/path
+    DEBUG=1 rake test
+
+WARNING: Running unit test will perform REAL actions on Bittrex
 
 ## Contributing
 

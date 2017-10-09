@@ -10,29 +10,30 @@ module Bittrex
     def new(api_key, api_secret)
       @api_key = api_key
       @api_secret = api_secret
+      @base_url = "https://bittrex.com/api/#{API_VERSION}"
       self
     end
 
     # Public methods
 
     def markets()
-      request("https://bittrex.com/api/#{API_VERSION}/public/getmarkets")
+      request("#{@base_url}/public/getmarkets")
     end
 
     def ticker(market)
-      request("https://bittrex.com/api/#{API_VERSION}/public/getticker", "market=#{market}")
+      request("#{@base_url}/public/getticker", "market=#{market}")
     end
 
     def summaries
-      request("https://bittrex.com/api/#{API_VERSION}/public/getmarketsummaries")
+      request("#{@base_url}/public/getmarketsummaries")
     end
 
     def orderbook(market, type, depth = 50)
-      request("https://bittrex.com/api/#{API_VERSION}/public/getorderbook", "market=#{market}&type=#{type}&depth=#{depth}")
+      request("#{@base_url}/public/getorderbook", "market=#{market}&type=#{type}&depth=#{depth}")
     end
 
     def market_history(market, count = 10)
-      request("https://bittrex.com/api/#{API_VERSION}/public/getmarkethistory", "market=#{market}&count=#{count}")
+      request("#{@base_url}/public/getmarkethistory", "market=#{market}&count=#{count}")
     end
 
     # End of public methods
@@ -41,29 +42,29 @@ module Bittrex
 
     def buy(market, quantity, rate = nil)
       if rate
-        request("https://bittrex.com/api/#{API_VERSION}/market/buylimit", "market=#{market}&quantity=#{quantity}&rate=#{rate}")
+        request("#{@base_url}/market/buylimit", "market=#{market}&quantity=#{quantity}&rate=#{rate}")
       else
-        request("https://bittrex.com/api/#{API_VERSION}/market/buymarket", "market=#{market}&quantity=#{quantity}")
+        request("#{@base_url}/market/buymarket", "market=#{market}&quantity=#{quantity}")
       end
     end
 
     def sell(market, quantity, rate = nil)
       if rate
-        request("https://bittrex.com/api/#{API_VERSION}/market/selllimit", "market=#{market}&quantity=#{quantity}&rate=#{rate}")
+        request("#{@base_url}/market/selllimit", "market=#{market}&quantity=#{quantity}&rate=#{rate}")
       else
-        request("https://bittrex.com/api/#{API_VERSION}/market/sellmarket", "market=#{market}&quantity=#{quantity}")
+        request("#{@base_url}/market/sellmarket", "market=#{market}&quantity=#{quantity}")
       end
     end
 
     def cancel(order_id)
-      request("https://bittrex.com/api/#{API_VERSION}/market/cancel", "uuid=#{order_id}")
+      request("#{@base_url}/market/cancel", "uuid=#{order_id}")
     end
 
     def open_orders(market = nil)
       if market then
-        request("https://bittrex.com/api/#{API_VERSION}/market/getopenorders", "market=#{market}")
+        request("#{@base_url}/market/getopenorders", "market=#{market}")
       else
-        request("https://bittrex.com/api/#{API_VERSION}/market/getopenorders")
+        request("#{@base_url}/market/getopenorders")
       end
     end
 
@@ -71,9 +72,9 @@ module Bittrex
       orders = []
 
       if market then
-        orders = request("https://bittrex.com/api/#{API_VERSION}/market/getopenorders", "market=#{market}")
+        orders = request("#{@base_url}/market/getopenorders", "market=#{market}")
       else
-        orders = request("https://bittrex.com/api/#{API_VERSION}/market/getopenorders")
+        orders = request("#{@base_url}/market/getopenorders")
       end
 
       orders.each do |order|
@@ -92,16 +93,26 @@ module Bittrex
     # Personal account methods
 
     def balances()
-      request("https://bittrex.com/api/#{API_VERSION}/account/getbalances")
+      request("#{@base_url}/account/getbalances")
     end
 
     def balance(currency)
-      request("https://bittrex.com/api/#{API_VERSION}/account/getbalance", "currency=#{currency}")
+      request("#{@base_url}/account/getbalance", "currency=#{currency}")
     end
 
+
+    # Retrieves completed orders.
+    # This method use to return the newest first,
+    # but there is no guarantee by Bittrex about the order in the response
     def order_history(market = nil, count = 10)
-      params = market ? "market=#{market}&count=#{count}" : "count=#{count}"
-      request("https://bittrex.com/api/#{API_VERSION}/account/getorderhistory", params)
+      params = market ? "market=#{market}" : ""
+      orders = request("#{@base_url}/account/getorderhistory", params)
+
+      if orders.size > count then
+        return orders[0,count]
+      end
+
+      return orders
     end
 
     # End of personal account methods
