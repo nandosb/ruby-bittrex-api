@@ -130,7 +130,6 @@ class BittrexTest < Minitest::Test
   end
 
   def test_closed_orders
-    byebug
     orders = @client.order_history('USDT-BTC',2)
 
     assert_equal orders.size, 2
