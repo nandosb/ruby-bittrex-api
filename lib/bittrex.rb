@@ -24,8 +24,12 @@ module Bittrex
       request("#{@base_url}/public/getticker", "market=#{market}")
     end
 
-    def summaries
+    def market_summaries
       request("#{@base_url}/public/getmarketsummaries")
+    end
+
+    def market_summary(market)
+      request("#{@base_url}/public/getmarketsummary","market=#{market}")
     end
 
     def orderbook(market, type, depth = 50)

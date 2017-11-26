@@ -135,4 +135,13 @@ class BittrexTest < Minitest::Test
     assert_equal orders.size, 2
   end
 
+  def test_market_summary
+
+    market = 'USDT-BTC'
+
+    summary = @client.market_summary(market)
+
+    assert_equal  summary['MarketName'], market
+  end
+
 end
