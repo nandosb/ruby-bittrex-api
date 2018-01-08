@@ -104,6 +104,10 @@ module Bittrex
       request("#{@base_url}/account/getbalance", "currency=#{currency}")
     end
 
+    def get_order(order_id)
+      request("#{@base_url}/account/getorder", "uuid=#{order_id}")
+    end
+
 
     # Retrieves completed orders.
     # This method use to return the newest first,
